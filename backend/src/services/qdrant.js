@@ -19,16 +19,22 @@ function qdrantConfig() {
   };
 }
 
-async function ensureUserIndex() {
+export async function ensurePayloadIndexes() {
   const client = new QdrantClient({
     url: process.env.QDRANT_URL,
     apiKey: process.env.QDRANT_API_KEY,
   });
-  await client.createPayloadIndex(collectionName, {
-    field_name: "metadata.userId",
-    field_schema: "keyword",
-    wait: true,
-  });
+  for (const fieldName of [
+    "metadata.userId",
+    "metadata.documentId",
+    "metadata.source",
+  ]) {
+    await client.createPayloadIndex(collectionName, {
+      field_name: fieldName,
+      field_schema: "keyword",
+      wait: true,
+    });
+  }
 }
 
 export async function createVectorStore(documents) {
@@ -37,7 +43,7 @@ export async function createVectorStore(documents) {
     getEmbeddings(),
     qdrantConfig(),
   );
-  await ensureUserIndex();
+  await ensurePayloadIndexes();
   return store;
 }
 
@@ -46,6 +52,6 @@ export async function getVectorStore() {
     getEmbeddings(),
     qdrantConfig(),
   );
-  await ensureUserIndex();
+  await ensurePayloadIndexes();
   return store;
 }

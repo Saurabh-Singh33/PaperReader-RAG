@@ -16,14 +16,26 @@ router.post("/", requireAuth, async (req, res) => {
     typeof req.body?.question === "string" ? req.body.question.trim() : "";
   if (!question)
     return res.status(400).json({ error: "A question is required." });
+  const documentId =
+    typeof req.body?.documentId === "string" ? req.body.documentId : "";
+  const documentSource =
+    typeof req.body?.documentSource === "string" ? req.body.documentSource : "";
+  if (!documentId && !documentSource)
+    return res
+      .status(400)
+      .json({ error: "Select a PDF before asking a question." });
   try {
     const store = await getVectorStore();
+    const documentFilter = documentId
+      ? { key: "metadata.documentId", match: { value: documentId } }
+      : { key: "metadata.source", match: { value: documentSource } };
     const documents = await store.similaritySearch(question, 3, {
       must: [
         {
           key: "metadata.userId",
           match: { value: req.auth.userId },
         },
+        documentFilter,
       ],
     });
     if (!documents.length)

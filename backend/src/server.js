@@ -6,6 +6,8 @@ import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import uploadRoute from "./routes/upload.js";
 import queryRoute from "./routes/query.js";
+import documentsRoute from "./routes/documents.js";
+import aiRoute from "./routes/ai.js";
 
 const app = express();
 const port = Number(process.env.PORT || 5000);
@@ -18,6 +20,8 @@ app.get("/api/health", (_req, res) =>
 app.use(clerkMiddleware());
 app.use("/api/upload", uploadRoute);
 app.use("/api/query", queryRoute);
+app.use("/api/documents", documentsRoute);
+app.use("/api/ai", aiRoute);
 app.use((error, _req, res, _next) => {
   if (error.code === "LIMIT_FILE_SIZE")
     return res.status(413).json({ error: "PDFs must be 10 MB or smaller." });
