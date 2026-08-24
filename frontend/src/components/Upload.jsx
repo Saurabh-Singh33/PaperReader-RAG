@@ -6,32 +6,43 @@ import { uploadPDF } from "../lib/api";
 export default function Upload({ onUploaded }) {
   const { getToken } = useAuth();
   const inputRef = useRef(null);
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [status, setStatus] = useState("idle");
   const [message, setMessage] = useState("");
 
   const chooseFile = (event) => {
-    const selected = event.target.files?.[0];
-    if (!selected) return;
-    if (selected.type !== "application/pdf") {
-      setMessage("Please choose a PDF file.");
+    const selected = [...(event.target.files || [])];
+    if (!selected.length) return;
+    if (
+      selected.some(
+        (file) =>
+          file.type !== "application/pdf" &&
+          !file.name.toLowerCase().endsWith(".pdf"),
+      )
+    ) {
+      setMessage("Please choose PDF files only.");
       return;
     }
-    setFile(selected);
+    if (selected.some((file) => file.size > 10 * 1024 * 1024)) {
+      setMessage("Each PDF must be 10 MB or smaller.");
+      return;
+    }
+    setFiles(selected);
     setMessage("");
   };
 
   const handleUpload = async () => {
-    if (!file) return setMessage("Choose a PDF to get started.");
+    if (!files.length)
+      return setMessage("Choose one or more PDFs to get started.");
     setStatus("uploading");
     setMessage("Reading your paper and creating its index...");
     try {
       const token = await getToken();
-      const result = await uploadPDF(file, token);
+      const result = await uploadPDF(files, token);
       setStatus("success");
       setMessage(result.message || "Your paper is ready for questions.");
-      onUploaded?.(file.name);
-      setFile(null);
+      result.documents?.forEach((document) => onUploaded?.(document));
+      setFiles([]);
       if (inputRef.current) inputRef.current.value = "";
     } catch (error) {
       setStatus("error");
@@ -51,26 +62,31 @@ export default function Upload({ onUploaded }) {
         </span>
       </div>
       <p className="panel-copy">
-        Upload one PDF and PaperReader will map the ideas inside it for a
-        thoughtful conversation.
+        Upload one or more PDFs and PaperReader will map the ideas inside them
+        for thoughtful conversations.
       </p>
       <button
-        className={`drop-zone ${file ? "has-file" : ""}`}
+        className={`drop-zone ${files.length ? "has-file" : ""}`}
         onClick={() => inputRef.current?.click()}
         type="button"
       >
-        {file ? <FileText size={27} /> : <UploadCloud size={27} />}
-        <strong>{file ? file.name : "Choose a PDF"}</strong>
+        {files.length ? <FileText size={27} /> : <UploadCloud size={27} />}
+        <strong>
+          {files.length
+            ? `${files.length} PDF${files.length === 1 ? "" : "s"} selected`
+            : "Choose PDF files"}
+        </strong>
         <span>
-          {file
-            ? `${(file.size / 1024 / 1024).toFixed(2)} MB · ready to index`
-            : "Maximum file size 10 MB"}
+          {files.length
+            ? files.map((file) => file.name).join(", ")
+            : "Maximum 10 MB per file"}
         </span>
       </button>
       <input
         ref={inputRef}
         type="file"
         accept="application/pdf,.pdf"
+        multiple
         onChange={chooseFile}
         hidden
       />

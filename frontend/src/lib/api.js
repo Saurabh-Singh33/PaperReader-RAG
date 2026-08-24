@@ -19,14 +19,49 @@ async function request(path, options, token) {
 
 export function uploadPDF(file, token) {
   const body = new FormData();
-  body.append("file", file);
+  for (const item of Array.isArray(file) ? file : [file])
+    body.append("files", item);
   return request("/upload", { method: "POST", body }, token);
 }
 
 export function askQuestion(question, token) {
+  return askQuestionForDocument(question, token, {});
+}
+
+export function askQuestionForDocument(question, token, document) {
   return request(
     "/query",
-    { method: "POST", body: JSON.stringify({ question }) },
+    {
+      method: "POST",
+      body: JSON.stringify({
+        question,
+        documentId: document.documentId || undefined,
+        documentSource: document.documentId ? undefined : document.source,
+      }),
+    },
+    token,
+  );
+}
+
+export function listDocuments(token) {
+  return request("/documents", { method: "GET" }, token);
+}
+
+export function deleteDocument(document, token) {
+  return request(
+    `/documents/${encodeURIComponent(document.id)}?documentId=${encodeURIComponent(document.documentId || "")}&source=${encodeURIComponent(document.source || "")}`,
+    { method: "DELETE" },
+    token,
+  );
+}
+
+export function askAI(question, token, model, messages, webSearch) {
+  return request(
+    "/ai",
+    {
+      method: "POST",
+      body: JSON.stringify({ question, model, messages, webSearch }),
+    },
     token,
   );
 }

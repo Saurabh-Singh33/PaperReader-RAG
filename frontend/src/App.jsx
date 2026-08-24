@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useUser } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import {
   ArrowRight,
   BookOpen,
@@ -8,6 +8,7 @@ import {
   FileText,
   GraduationCap,
   LockKeyhole,
+  Menu,
   MessageCircle,
   Search,
   ShieldCheck,
@@ -17,54 +18,161 @@ import {
 import Auth from "./components/Auth";
 import Upload from "./components/Upload";
 import Chat from "./components/Chat";
+import AIChat from "./components/AIChat";
+import Sidebar from "./components/Sidebar";
+import ThemeToggle from "./components/ThemeToggle";
+import { deleteDocument, listDocuments } from "./lib/api";
+import logo from "./assets/logo.svg";
 
 export default function App() {
   const { isSignedIn, isLoaded } = useUser();
-  const [documentName, setDocumentName] = useState("");
+  const { getToken } = useAuth();
+  const [documents, setDocuments] = useState([]);
+  const [selected, setSelected] = useState(null);
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("paperreader-theme") || "light",
+  );
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [chatSession, setChatSession] = useState(0);
+  const [activeTab, setActiveTab] = useState("papers");
+  useEffect(() => {
+    if (!isSignedIn) return;
+    getToken()
+      .then((token) => listDocuments(token))
+      .then((result) => {
+        setDocuments(result.documents || []);
+        setSelected((current) => current || result.documents?.[0] || null);
+      })
+      .catch(() => setDocuments([]));
+  }, [getToken, isSignedIn]);
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("paperreader-theme", theme);
+  }, [theme]);
+  useEffect(() => {
+    const handleShortcut = (event) => {
+      if (!event.ctrlKey) return;
+      if (event.key === "1") setActiveTab("papers");
+      if (event.key === "2") setActiveTab("ai");
+    };
+    window.addEventListener("keydown", handleShortcut);
+    return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
   if (!isLoaded)
     return (
       <div className="loading-screen">
-        <span className="brand-mark">P</span>
+        <img className="brand-logo" src={logo} alt="PaperReader" />
       </div>
     );
   if (!isSignedIn) return <Landing />;
+  const handleUploaded = (document) => {
+    setDocuments((current) => [
+      document,
+      ...current.filter((item) => item.id !== document.id),
+    ]);
+    setSelected(document);
+    setChatSession((current) => current + 1);
+  };
+  const handleDelete = async (document) => {
+    if (!window.confirm(`Delete ${document.name}?`)) return;
+    const token = await getToken();
+    await deleteDocument(document, token);
+    setDocuments((current) =>
+      current.filter((item) => item.id !== document.id),
+    );
+    if (selected?.id === document.id) setSelected(null);
+  };
   return (
-    <main className="app-shell">
-      <header className="topbar">
+    <main className="reader-app">
+      <header className="reader-topbar">
+        <button
+          className="menu-button"
+          type="button"
+          onClick={() => setSidebarOpen((open) => !open)}
+          aria-label="Toggle sidebar"
+        >
+          <Menu size={19} />
+        </button>
         <a className="brand" href="/">
-          <span className="brand-mark">P</span>
-          <span>PaperReader</span>
+          <img className="brand-logo" src={logo} alt="PaperReader" />
         </a>
-        <div className="topbar-meta">
-          <span className="secure-label">
-            <LockKeyhole size={13} /> Your private reading room
-          </span>
-          <Auth compact />
+        <div className="reader-top-actions">
+          <ThemeToggle
+            theme={theme}
+            onToggle={() =>
+              setTheme((current) => (current === "dark" ? "light" : "dark"))
+            }
+          />
         </div>
       </header>
-      <section className="dashboard-intro">
-        <div>
-          <p className="eyebrow">
-            <Sparkles size={14} /> Your research workspace
-          </p>
-          <h1>Turn reading time into thinking time.</h1>
-          <p className="hero-copy">
-            Upload a paper, then explore its ideas with answers grounded in the
-            text.
-          </p>
+      <div className="reader-body">
+        <div className={`sidebar-wrap ${sidebarOpen ? "open" : ""}`}>
+          <Sidebar
+            documents={documents}
+            selected={selected}
+            onSelect={(document) => {
+              setSelected(document);
+              setChatSession((current) => current + 1);
+              setSidebarOpen(false);
+            }}
+            onNewChat={() => {
+              setSelected(null);
+              setChatSession((current) => current + 1);
+            }}
+            onDelete={handleDelete}
+          />
         </div>
-        <div className="dashboard-stat">
-          <ShieldCheck size={19} />
-          <span>
-            <strong>Private by design</strong>
-            <br />
-            Your papers stay yours.
-          </span>
-        </div>
-      </section>
-      <div className="workspace">
-        <Upload onUploaded={setDocumentName} />
-        <Chat documentName={documentName} />
+        <section className="reader-main">
+          <div className="tab-container" role="tablist" aria-label="Chat modes">
+            <button
+              className={`tab-button ${activeTab === "papers" ? "active" : ""}`}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "papers"}
+              onClick={() => setActiveTab("papers")}
+            >
+              <FileText size={15} /> Papers
+            </button>
+            <button
+              className={`tab-button ${activeTab === "ai" ? "active" : ""}`}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === "ai"}
+              onClick={() => setActiveTab("ai")}
+            >
+              <MessageCircle size={15} /> AI Chat
+            </button>
+          </div>
+          <div
+            className={`selected-paper ${activeTab === "ai" ? "ai-selected" : ""}`}
+          >
+            <span>{selected ? "Selected paper" : "No paper selected"}</span>
+            <strong>
+              {activeTab === "ai"
+                ? "General conversation, no PDF context"
+                : selected?.name || "Choose a PDF from your library"}
+            </strong>
+          </div>
+          <div className="workspace">
+            <div
+              className={
+                activeTab === "papers"
+                  ? "tab-panel-visible"
+                  : "tab-panel-hidden"
+              }
+            >
+              <Upload onUploaded={handleUploaded} />
+              <Chat key={chatSession} document={selected} />
+            </div>
+            <div
+              className={
+                activeTab === "ai" ? "tab-panel-visible" : "tab-panel-hidden"
+              }
+            >
+              <AIChat />
+            </div>
+          </div>
+        </section>
       </div>
       <footer>
         <span>
@@ -81,8 +189,7 @@ function Landing() {
     <main className="landing">
       <header className="topbar">
         <a className="brand" href="/">
-          <span className="brand-mark">P</span>
-          <span>PaperReader</span>
+          <img className="brand-logo" src={logo} alt="PaperReader" />
         </a>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#features">Features</a>
@@ -206,8 +313,7 @@ function Landing() {
       </section>
       <footer className="landing-footer">
         <span className="brand">
-          <span className="brand-mark">P</span>
-          <span>PaperReader</span>
+          <img className="brand-logo" src={logo} alt="PaperReader" />
         </span>
         <span>Copyright 2026 PaperReader | Built for curious minds</span>
       </footer>
