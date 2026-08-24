@@ -24,7 +24,11 @@ function MissingKey() {
 root.render(
   publishableKey ? (
     <React.StrictMode>
-      <ClerkProvider publishableKey={publishableKey}>
+      <ClerkProvider
+        publishableKey={publishableKey}
+        afterSignInUrl="/dashboard"
+        afterSignUpUrl="/dashboard"
+      >
         <App />
       </ClerkProvider>
     </React.StrictMode>
