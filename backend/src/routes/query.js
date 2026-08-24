@@ -19,7 +19,12 @@ router.post("/", requireAuth, async (req, res) => {
   try {
     const store = await getVectorStore();
     const documents = await store.similaritySearch(question, 3, {
-      userId: req.auth.userId,
+      must: [
+        {
+          key: "metadata.userId",
+          match: { value: req.auth.userId },
+        },
+      ],
     });
     if (!documents.length)
       return res.json({
@@ -31,7 +36,7 @@ router.post("/", requireAuth, async (req, res) => {
       .join("\n\n---\n\n");
     const model = new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_API_KEY,
-      model: "gemini-2.0-flash",
+      model: "gemini-3.6-flash",
       temperature: 0.2,
     });
     const answer = await prompt

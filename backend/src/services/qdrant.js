@@ -1,4 +1,5 @@
 import { QdrantVectorStore } from "@langchain/qdrant";
+import { QdrantClient } from "@qdrant/js-client-rest";
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
 
 const collectionName = process.env.QDRANT_COLLECTION || "pdf_docs";
@@ -18,17 +19,33 @@ function qdrantConfig() {
   };
 }
 
+async function ensureUserIndex() {
+  const client = new QdrantClient({
+    url: process.env.QDRANT_URL,
+    apiKey: process.env.QDRANT_API_KEY,
+  });
+  await client.createPayloadIndex(collectionName, {
+    field_name: "metadata.userId",
+    field_schema: "keyword",
+    wait: true,
+  });
+}
+
 export async function createVectorStore(documents) {
-  return QdrantVectorStore.fromDocuments(
+  const store = await QdrantVectorStore.fromDocuments(
     documents,
     getEmbeddings(),
     qdrantConfig(),
   );
+  await ensureUserIndex();
+  return store;
 }
 
 export async function getVectorStore() {
-  return QdrantVectorStore.fromExistingCollection(
+  const store = await QdrantVectorStore.fromExistingCollection(
     getEmbeddings(),
     qdrantConfig(),
   );
+  await ensureUserIndex();
+  return store;
 }
