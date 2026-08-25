@@ -94,7 +94,8 @@ export default function Chat({ document }) {
         ...current,
         {
           type: "ai",
-          content: `I couldn't reach your paper: ${error.message}`,
+          content:
+            "I'm having trouble connecting to your paper. Please try again.",
           sources: [],
         },
       ]);
@@ -221,7 +222,9 @@ function MessageBubble({
         {isUser ? <span>You</span> : <FileText size={16} />}
       </div>
       <div className="message-content">
-        <div className="message-sender">{isUser ? "You" : "PaperReader"}</div>
+        <div className="message-sender">
+          {isUser ? "You" : "PaperReader (PDF)"}
+        </div>
         <div className="message-text">{message.content}</div>
         {!isUser && message.sources?.length > 0 && (
           <div className="message-sources">
@@ -270,7 +273,7 @@ function LoadingMessage() {
         <FileText size={16} />
       </div>
       <div className="message-content">
-        <div className="message-sender">PaperReader</div>
+        <div className="message-sender">PaperReader (PDF)</div>
         <div className="loading-dots">
           <i />
           <i />

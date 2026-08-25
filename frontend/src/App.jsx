@@ -8,8 +8,10 @@ import {
   FileText,
   GraduationCap,
   LockKeyhole,
+  Maximize,
   Menu,
   MessageCircle,
+  Minimize,
   Search,
   ShieldCheck,
   Sparkles,
@@ -35,6 +37,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatSession, setChatSession] = useState(0);
   const [activeTab, setActiveTab] = useState("papers");
+  const [isFullscreen, setIsFullscreen] = useState(false);
   useEffect(() => {
     if (!isSignedIn) return;
     getToken()
@@ -57,6 +60,13 @@ export default function App() {
     };
     window.addEventListener("keydown", handleShortcut);
     return () => window.removeEventListener("keydown", handleShortcut);
+  }, []);
+  useEffect(() => {
+    const handleFullscreenChange = () =>
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
   if (!isLoaded)
     return (
@@ -82,6 +92,10 @@ export default function App() {
     );
     if (selected?.id === document.id) setSelected(null);
   };
+  const toggleFullScreen = async () => {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await document.documentElement.requestFullscreen();
+  };
   return (
     <main className="reader-app">
       <header className="reader-topbar">
@@ -94,7 +108,8 @@ export default function App() {
           <Menu size={19} />
         </button>
         <a className="brand" href="/">
-          <img className="brand-logo" src={logo} alt="PaperReader" />
+          <span className="reader-logo-mark">P</span>
+          <span>PaperReader</span>
         </a>
         <div className="reader-top-actions">
           <ThemeToggle
@@ -103,6 +118,15 @@ export default function App() {
               setTheme((current) => (current === "dark" ? "light" : "dark"))
             }
           />
+          <button
+            className="fullscreen-button"
+            type="button"
+            onClick={toggleFullScreen}
+            aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          >
+            {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+          </button>
         </div>
       </header>
       <div className="reader-body">
@@ -118,6 +142,7 @@ export default function App() {
             onNewChat={() => {
               setSelected(null);
               setChatSession((current) => current + 1);
+              setActiveTab("papers");
             }}
             onDelete={handleDelete}
           />
@@ -161,7 +186,10 @@ export default function App() {
                   : "tab-panel-hidden"
               }
             >
-              <Upload onUploaded={handleUploaded} />
+              <Upload
+                key={`upload-${chatSession}`}
+                onUploaded={handleUploaded}
+              />
               <Chat key={chatSession} document={selected} />
             </div>
             <div
@@ -169,7 +197,7 @@ export default function App() {
                 activeTab === "ai" ? "tab-panel-visible" : "tab-panel-hidden"
               }
             >
-              <AIChat />
+              <AIChat key={`ai-${chatSession}`} />
             </div>
           </div>
         </section>

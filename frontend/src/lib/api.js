@@ -1,16 +1,23 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 async function request(path, options, token) {
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      ...(options.body instanceof FormData
-        ? {}
-        : { "Content-Type": "application/json" }),
-      Authorization: `Bearer ${token}`,
-      ...options.headers,
-    },
-  });
+  let response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: {
+        ...(options.body instanceof FormData
+          ? {}
+          : { "Content-Type": "application/json" }),
+        Authorization: `Bearer ${token}`,
+        ...options.headers,
+      },
+    });
+  } catch {
+    throw new Error(
+      "I'm having trouble connecting. Please check your internet and try again.",
+    );
+  }
   const data = await response.json().catch(() => ({}));
   if (!response.ok)
     throw new Error(data.error || data.message || "Something went wrong");
@@ -55,12 +62,12 @@ export function deleteDocument(document, token) {
   );
 }
 
-export function askAI(question, token, model, messages, webSearch) {
+export function askAI(question, token, messages, webSearch) {
   return request(
     "/ai",
     {
       method: "POST",
-      body: JSON.stringify({ question, model, messages, webSearch }),
+      body: JSON.stringify({ question, messages, webSearch }),
     },
     token,
   );

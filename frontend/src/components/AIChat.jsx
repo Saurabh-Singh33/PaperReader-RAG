@@ -14,11 +14,6 @@ import {
 } from "lucide-react";
 import { askAI } from "../lib/api";
 
-const models = [
-  { value: "google/gemini-2.0-flash-001", label: "Gemini Flash" },
-  { value: "openai/gpt-4o-mini", label: "GPT-4o mini" },
-  { value: "anthropic/claude-3.5-haiku", label: "Claude Haiku" },
-];
 const suggestions = [
   "Explain a difficult concept",
   "Help me brainstorm ideas",
@@ -30,7 +25,6 @@ export default function AIChat() {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [model, setModel] = useState(models[0].value);
   const [webSearch, setWebSearch] = useState(false);
   const [liked, setLiked] = useState({});
   const [copied, setCopied] = useState(null);
@@ -61,13 +55,7 @@ export default function AIChat() {
         role: message.type === "user" ? "user" : "assistant",
         content: message.content,
       }));
-      const result = await askAI(
-        text,
-        await getToken(),
-        model,
-        history,
-        webSearch,
-      );
+      const result = await askAI(text, await getToken(), history, webSearch);
       setMessages((current) => [
         ...current,
         { type: "ai", content: result.answer },
@@ -75,7 +63,10 @@ export default function AIChat() {
     } catch (error) {
       setMessages((current) => [
         ...current,
-        { type: "ai", content: `I couldn't reach the AI: ${error.message}` },
+        {
+          type: "ai",
+          content: error.message || "Something went wrong. Please try again.",
+        },
       ]);
     } finally {
       setLoading(false);
@@ -236,19 +227,6 @@ export default function AIChat() {
               onChange={(event) => setWebSearch(event.target.checked)}
             />{" "}
             <Globe2 size={13} /> Web search {webSearch ? "on" : "off"}
-          </label>
-          <label>
-            Model{" "}
-            <select
-              value={model}
-              onChange={(event) => setModel(event.target.value)}
-            >
-              {models.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
           </label>
         </div>
       </div>
