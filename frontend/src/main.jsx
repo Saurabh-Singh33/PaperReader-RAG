@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import { ClerkProvider } from "@clerk/clerk-react";
 import App from "./App";
 import "./App.css";
+import logo from "./assets/logo.jpg";
+
+const brandName = "PaperReader | Know your Papers";
 
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY?.trim();
 const root = createRoot(document.getElementById("root"));
@@ -10,8 +13,8 @@ const root = createRoot(document.getElementById("root"));
 function MissingKey() {
   return (
     <main className="setup-screen">
-      <span className="brand-mark">P</span>
-      <p className="eyebrow">PaperReader setup</p>
+      <img className="brand-image" src={logo} alt="" />
+      <p className="eyebrow">{brandName} setup</p>
       <h1>Add your Clerk publishable key.</h1>
       <p>
         Copy <code>frontend/.env.example</code> to <code>frontend/.env</code>,
@@ -24,8 +27,8 @@ function MissingKey() {
 function ClerkLoading() {
   return (
     <main className="loading-screen">
-      <span className="brand-mark">P</span>
-      <p className="eyebrow">PaperReader</p>
+      <img className="brand-image" src={logo} alt="" />
+      <p className="eyebrow">{brandName}</p>
       <p>Connecting to your secure workspace...</p>
     </main>
   );

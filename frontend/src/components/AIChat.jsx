@@ -2,15 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import {
   ArrowUp,
-  Bot,
   Check,
   Copy,
+  Download,
   Globe2,
   LoaderCircle,
   Share2,
   ThumbsUp,
+  Trash2,
 } from "lucide-react";
 import { askAI } from "../lib/api";
+import logo from "../assets/logo.jpg";
 
 const suggestions = [
   "Explain a difficult concept",
@@ -35,6 +37,7 @@ export default function AIChat() {
   const [webSearch, setWebSearch] = useState(false);
   const [liked, setLiked] = useState({});
   const [copied, setCopied] = useState(null);
+  const [chatCopied, setChatCopied] = useState(false);
   const endRef = useRef(null);
 
   useEffect(() => {
@@ -47,15 +50,74 @@ export default function AIChat() {
   };
   const share = async (text, index) => {
     if (navigator.share)
-      await navigator.share({ title: "PaperReader AI", text }).catch(() => {});
+      await navigator
+        .share({ title: "PaperReader | Know your Papers", text })
+        .catch(() => {});
     else await copy(text, index);
+  };
+  const shareChat = async () => {
+    if (!messages.length) return;
+    const chatText = [
+      "PaperReader | Know your Papers Chat",
+      new Date().toLocaleString(),
+      "=".repeat(50),
+      ...messages.map(
+        (message) =>
+          `${message.type === "user" ? "You" : "PaperReader Assistant"} (${new Date(message.createdAt || Date.now()).toLocaleString()}):\n${message.content}`,
+      ),
+      "=".repeat(50),
+    ].join("\n\n");
+    await navigator.clipboard?.writeText(chatText);
+    setChatCopied(true);
+    window.setTimeout(() => setChatCopied(false), 1600);
+  };
+  const exportChat = (format) => {
+    if (!messages.length) return;
+    const date = new Date().toISOString().slice(0, 10);
+    const content =
+      format === "json"
+        ? JSON.stringify(
+            {
+              title: "PaperReader | Know your Papers Chat",
+              date: new Date().toISOString(),
+              messages,
+            },
+            null,
+            2,
+          )
+        : [
+            "# PaperReader | Know your Papers Chat",
+            `Date: ${new Date().toLocaleString()}`,
+            "",
+            ...messages.map(
+              (message) =>
+                `${message.type === "user" ? "You" : "PaperReader Assistant"} (${new Date(message.createdAt || Date.now()).toLocaleString()}):\n\n${message.content}`,
+            ),
+          ].join("\n\n");
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(
+      new Blob([content], {
+        type: format === "json" ? "application/json" : "text/markdown",
+      }),
+    );
+    link.download = `PaperReader-Chat-${date}.${format === "json" ? "json" : "md"}`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+  const clearChat = () => {
+    if (!messages.length || !window.confirm("Clear this conversation?")) return;
+    setMessages([]);
+    setLiked({});
   };
   const submit = async (event) => {
     event.preventDefault();
     const text = question.trim();
     if (!text || loading) return;
     setQuestion("");
-    setMessages((current) => [...current, { type: "user", content: text }]);
+    setMessages((current) => [
+      ...current,
+      { type: "user", content: text, createdAt: Date.now() },
+    ]);
     setLoading(true);
     try {
       const history = messages.map((message) => ({
@@ -65,7 +127,11 @@ export default function AIChat() {
       const result = await askAI(text, await getToken(), history, webSearch);
       setMessages((current) => [
         ...current,
-        { type: "ai", content: cleanResponse(result.answer) },
+        {
+          type: "ai",
+          content: cleanResponse(result.answer),
+          createdAt: Date.now(),
+        },
       ]);
     } catch (error) {
       setMessages((current) => [
@@ -73,6 +139,7 @@ export default function AIChat() {
         {
           type: "ai",
           content: error.message || "Something went wrong. Please try again.",
+          createdAt: Date.now(),
         },
       ]);
     } finally {
@@ -85,7 +152,7 @@ export default function AIChat() {
         {!messages.length && !loading ? (
           <div className="empty-state">
             <span className="empty-icon">
-              <Bot size={24} />
+              <img src={logo} alt="" className="empty-logo" />
             </span>
             <h3>No messages yet</h3>
             <div className="empty-suggestions">
@@ -173,6 +240,28 @@ export default function AIChat() {
         <div ref={endRef} />
       </div>
       <div className="chat-input-area">
+        <div className="chat-actions">
+          <button type="button" onClick={shareChat} disabled={!messages.length}>
+            <Share2 size={14} /> {chatCopied ? "Copied" : "Share chat"}
+          </button>
+          <button
+            type="button"
+            onClick={() => exportChat("json")}
+            disabled={!messages.length}
+          >
+            <Download size={14} /> JSON
+          </button>
+          <button
+            type="button"
+            onClick={() => exportChat("md")}
+            disabled={!messages.length}
+          >
+            <Download size={14} /> Markdown
+          </button>
+          <button type="button" onClick={clearChat} disabled={!messages.length}>
+            <Trash2 size={14} /> Clear
+          </button>
+        </div>
         <div className="suggestion-pills">
           {suggestions.map((item) => (
             <button key={item} type="button" onClick={() => setQuestion(item)}>

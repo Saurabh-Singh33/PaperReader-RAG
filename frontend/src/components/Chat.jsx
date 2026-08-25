@@ -5,10 +5,12 @@ import {
   BookOpen,
   Check,
   Copy,
+  Download,
   FileText,
   LoaderCircle,
   Share2,
   ThumbsUp,
+  Trash2,
 } from "lucide-react";
 import { askQuestionForDocument } from "../lib/api";
 
@@ -43,6 +45,7 @@ export default function Chat({ document }) {
     }
   });
   const [copied, setCopied] = useState(null);
+  const [chatCopied, setChatCopied] = useState(false);
   const endRef = useRef(null);
 
   useEffect(() => {
@@ -64,9 +67,73 @@ export default function Chat({ document }) {
   const shareAnswer = async (content, id) => {
     if (navigator.share)
       await navigator
-        .share({ title: "PaperReader answer", text: content })
+        .share({
+          title: "PaperReader | Know your Papers answer",
+          text: content,
+        })
         .catch(() => {});
     else await copyAnswer(content, id);
+  };
+  const shareChat = async () => {
+    if (!messages.length) return;
+    const chatText = [
+      "PaperReader | Know your Papers Chat",
+      document?.name ? `Paper: ${document.name}` : "",
+      new Date().toLocaleString(),
+      "=".repeat(50),
+      ...messages.map(
+        (message) =>
+          `${message.type === "user" ? "You" : "PaperReader (PDF)"} (${new Date(message.createdAt || Date.now()).toLocaleString()}):\n${message.content}`,
+      ),
+      "=".repeat(50),
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+    await navigator.clipboard?.writeText(chatText);
+    setChatCopied(true);
+    window.setTimeout(() => setChatCopied(false), 1600);
+  };
+  const exportChat = (format) => {
+    if (!messages.length) return;
+    const date = new Date().toISOString().slice(0, 10);
+    const content =
+      format === "json"
+        ? JSON.stringify(
+            {
+              title: "PaperReader | Know your Papers Chat",
+              paper: document?.name || null,
+              date: new Date().toISOString(),
+              messages,
+            },
+            null,
+            2,
+          )
+        : [
+            "# PaperReader | Know your Papers Chat",
+            document?.name ? `Paper: ${document.name}` : "",
+            `Date: ${new Date().toLocaleString()}`,
+            "",
+            ...messages.map(
+              (message) =>
+                `${message.type === "user" ? "You" : "PaperReader (PDF)"} (${new Date(message.createdAt || Date.now()).toLocaleString()}):\n\n${message.content}`,
+            ),
+          ]
+            .filter(Boolean)
+            .join("\n\n");
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(
+      new Blob([content], {
+        type: format === "json" ? "application/json" : "text/markdown",
+      }),
+    );
+    link.download = `PaperReader-Chat-${date}.${format === "json" ? "json" : "md"}`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+  const clearChat = () => {
+    if (!messages.length || !window.confirm("Clear this conversation?")) return;
+    setMessages([]);
+    setLiked({});
   };
   const submit = async (event) => {
     event?.preventDefault();
@@ -83,7 +150,10 @@ export default function Chat({ document }) {
       return;
     }
     setQuestion("");
-    setMessages((current) => [...current, { type: "user", content: text }]);
+    setMessages((current) => [
+      ...current,
+      { type: "user", content: text, createdAt: Date.now() },
+    ]);
     setLoading(true);
     try {
       const token = await getToken();
@@ -94,6 +164,7 @@ export default function Chat({ document }) {
           type: "ai",
           content: cleanResponse(result.answer || result.message),
           sources: result.sources || [],
+          createdAt: Date.now(),
         },
       ]);
     } catch (error) {
@@ -104,6 +175,7 @@ export default function Chat({ document }) {
           content:
             "I'm having trouble connecting to your paper. Please try again.",
           sources: [],
+          createdAt: Date.now(),
         },
       ]);
     } finally {
@@ -139,6 +211,28 @@ export default function Chat({ document }) {
         <div ref={endRef} />
       </div>
       <div className="chat-input-area">
+        <div className="chat-actions">
+          <button type="button" onClick={shareChat} disabled={!messages.length}>
+            <Share2 size={14} /> {chatCopied ? "Copied" : "Share chat"}
+          </button>
+          <button
+            type="button"
+            onClick={() => exportChat("json")}
+            disabled={!messages.length}
+          >
+            <Download size={14} /> JSON
+          </button>
+          <button
+            type="button"
+            onClick={() => exportChat("md")}
+            disabled={!messages.length}
+          >
+            <Download size={14} /> Markdown
+          </button>
+          <button type="button" onClick={clearChat} disabled={!messages.length}>
+            <Trash2 size={14} /> Clear
+          </button>
+        </div>
         <div className="suggestion-pills">
           {suggestions.map((item) => (
             <button key={item} type="button" onClick={() => setQuestion(item)}>

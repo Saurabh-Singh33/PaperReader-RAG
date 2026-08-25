@@ -62,8 +62,8 @@ export default function Upload({ onUploaded }) {
         </span>
       </div>
       <p className="panel-copy">
-        Upload one or more PDFs and PaperReader will map the ideas inside them
-        for thoughtful conversations.
+        Upload one or more PDFs and PaperReader | Know Your Papers will map the
+        ideas inside them for thoughtful conversations.
       </p>
       <button
         className={`drop-zone ${files.length ? "has-file" : ""}`}

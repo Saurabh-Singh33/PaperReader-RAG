@@ -24,6 +24,9 @@ import AIChat from "./components/AIChat";
 import Sidebar from "./components/Sidebar";
 import ThemeToggle from "./components/ThemeToggle";
 import { deleteDocument, listDocuments } from "./lib/api";
+import logo from "./assets/logo.jpg";
+
+const brandName = "PaperReader | Know your Papers";
 
 export default function App() {
   const { isSignedIn, isLoaded } = useUser();
@@ -70,8 +73,8 @@ export default function App() {
   if (!isLoaded)
     return (
       <div className="loading-screen">
-        <span className="reader-logo-mark">P</span>
-        <strong>PaperReader</strong>
+        <img className="brand-image" src={logo} alt="" />
+        <strong>{brandName}</strong>
       </div>
     );
   if (!isSignedIn) return <Landing />;
@@ -108,8 +111,8 @@ export default function App() {
           <Menu size={19} />
         </button>
         <a className="brand" href="/">
-          <span className="reader-logo-mark">P</span>
-          <span>PaperReader</span>
+          <img className="brand-image" src={logo} alt="" />
+          <span>{brandName}</span>
         </a>
         <div className="reader-top-actions">
           <ThemeToggle
@@ -170,6 +173,7 @@ export default function App() {
           </div>
           {activeTab === "papers" && selected && (
             <div className="selected-paper">
+              <FileText className="selected-paper-icon" size={14} />
               <strong>{selected.name}</strong>
             </div>
           )}
@@ -212,8 +216,8 @@ function Landing() {
     <main className="landing">
       <header className="topbar">
         <a className="brand" href="/">
-          <span className="reader-logo-mark">P</span>
-          <span>PaperReader</span>
+          <img className="brand-image" src={logo} alt="" />
+          <span>{brandName}</span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#features">Features</a>
@@ -233,7 +237,7 @@ function Landing() {
             <em>halfway.</em>
           </h1>
           <p className="hero-copy">
-            PaperReader turns dense academic papers into clear, useful
+            {brandName} turns dense academic papers into clear, useful
             conversations, so you can spend less time searching and more time
             thinking.
           </p>
@@ -247,7 +251,7 @@ function Landing() {
         </div>
         <div
           className="hero-visual"
-          aria-label="PaperReader document analysis preview"
+          aria-label="PaperReader | Know your Papers document analysis preview"
         >
           <div className="visual-glow" />
           <div className="paper-sheet">
@@ -313,7 +317,7 @@ function Landing() {
             </h2>
           </div>
           <p>
-            From first skim to final insight, PaperReader keeps the important
+            From first skim to final insight, {brandName} keeps the important
             parts of your paper close at hand.
           </p>
         </div>
@@ -337,10 +341,10 @@ function Landing() {
       </section>
       <footer className="landing-footer">
         <span className="brand">
-          <span className="reader-logo-mark">P</span>
-          <span>PaperReader</span>
+          <img className="brand-image" src={logo} alt="" />
+          <span>{brandName}</span>
         </span>
-        <span>Copyright 2026 PaperReader | Built for curious minds</span>
+        <span>Copyright 2026 {brandName} | Built for curious minds</span>
       </footer>
     </main>
   );
