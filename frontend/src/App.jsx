@@ -24,7 +24,6 @@ import AIChat from "./components/AIChat";
 import Sidebar from "./components/Sidebar";
 import ThemeToggle from "./components/ThemeToggle";
 import { deleteDocument, listDocuments } from "./lib/api";
-import logo from "./assets/logo.svg";
 
 export default function App() {
   const { isSignedIn, isLoaded } = useUser();
@@ -71,7 +70,8 @@ export default function App() {
   if (!isLoaded)
     return (
       <div className="loading-screen">
-        <img className="brand-logo" src={logo} alt="PaperReader" />
+        <span className="reader-logo-mark">P</span>
+        <strong>PaperReader</strong>
       </div>
     );
   if (!isSignedIn) return <Landing />;
@@ -168,16 +168,11 @@ export default function App() {
               <MessageCircle size={15} /> AI Chat
             </button>
           </div>
-          <div
-            className={`selected-paper ${activeTab === "ai" ? "ai-selected" : ""}`}
-          >
-            <span>{selected ? "Selected paper" : "No paper selected"}</span>
-            <strong>
-              {activeTab === "ai"
-                ? "General conversation, no PDF context"
-                : selected?.name || "Choose a PDF from your library"}
-            </strong>
-          </div>
+          {activeTab === "papers" && selected && (
+            <div className="selected-paper">
+              <strong>{selected.name}</strong>
+            </div>
+          )}
           <div className="workspace">
             <div
               className={
@@ -217,7 +212,8 @@ function Landing() {
     <main className="landing">
       <header className="topbar">
         <a className="brand" href="/">
-          <img className="brand-logo" src={logo} alt="PaperReader" />
+          <span className="reader-logo-mark">P</span>
+          <span>PaperReader</span>
         </a>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#features">Features</a>
@@ -341,7 +337,8 @@ function Landing() {
       </section>
       <footer className="landing-footer">
         <span className="brand">
-          <img className="brand-logo" src={logo} alt="PaperReader" />
+          <span className="reader-logo-mark">P</span>
+          <span>PaperReader</span>
         </span>
         <span>Copyright 2026 PaperReader | Built for curious minds</span>
       </footer>

@@ -4,7 +4,7 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import App from "./App";
 import "./App.css";
 
-const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY?.trim();
 const root = createRoot(document.getElementById("root"));
 
 function MissingKey() {
@@ -21,13 +21,25 @@ function MissingKey() {
   );
 }
 
+function ClerkLoading() {
+  return (
+    <main className="loading-screen">
+      <span className="brand-mark">P</span>
+      <p className="eyebrow">PaperReader</p>
+      <p>Connecting to your secure workspace...</p>
+    </main>
+  );
+}
+
+const hasValidKey = publishableKey?.startsWith("pk_");
+
 root.render(
-  publishableKey ? (
+  hasValidKey ? (
     <React.StrictMode>
       <ClerkProvider
         publishableKey={publishableKey}
-        afterSignInUrl="/dashboard"
-        afterSignUpUrl="/dashboard"
+        fallbackRedirectUrl="/dashboard"
+        fallback={<ClerkLoading />}
       >
         <App />
       </ClerkProvider>

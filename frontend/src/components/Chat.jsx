@@ -7,7 +7,6 @@ import {
   Copy,
   FileText,
   LoaderCircle,
-  MessageCircle,
   Share2,
   ThumbsUp,
 } from "lucide-react";
@@ -18,6 +17,14 @@ const suggestions = [
   "Summarize the methodology",
   "What are the limitations?",
 ];
+
+function cleanResponse(text) {
+  return String(text || "")
+    .replace(/\*{1,3}/g, "")
+    .replace(/^#{1,6}\s*/gm, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
+}
 
 export default function Chat({ document }) {
   const { getToken } = useAuth();
@@ -85,7 +92,7 @@ export default function Chat({ document }) {
         ...current,
         {
           type: "ai",
-          content: result.answer || result.message,
+          content: cleanResponse(result.answer || result.message),
           sources: result.sources || [],
         },
       ]);
@@ -106,19 +113,6 @@ export default function Chat({ document }) {
 
   return (
     <section className="panel chat-panel conversation-panel">
-      <div className="panel-heading">
-        <div>
-          <p className="eyebrow">02 / Ask anything</p>
-          <h2>Make the paper talk.</h2>
-        </div>
-        <span className="icon-disc icon-disc-light">
-          <MessageCircle size={19} />
-        </span>
-      </div>
-      <p className="panel-copy">
-        Ask for a summary, challenge an argument, or find the exact thread you
-        need.
-      </p>
       <div className="message-list" aria-live="polite">
         {!messages.length && !loading ? (
           <EmptyState onSelect={setQuestion} />
@@ -157,9 +151,7 @@ export default function Chat({ document }) {
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
             placeholder={
-              document
-                ? "Ask your paper a question..."
-                : "Select a PDF to start asking"
+              document ? "Ask a question..." : "Select a PDF to start asking"
             }
             aria-label="Question"
             disabled={loading || !document}
@@ -177,9 +169,6 @@ export default function Chat({ document }) {
             )}
           </button>
         </form>
-        <p className="input-disclaimer">
-          PaperReader can make mistakes. Check important information.
-        </p>
       </div>
     </section>
   );
@@ -191,11 +180,7 @@ function EmptyState({ onSelect }) {
       <span className="empty-icon">
         <BookOpen size={24} />
       </span>
-      <h3>Conversation starts here</h3>
-      <p>
-        Ask for a summary, challenge an argument, or find the exact thread you
-        need.
-      </p>
+      <h3>No messages yet</h3>
       <div className="empty-suggestions">
         {suggestions.map((item) => (
           <button key={item} type="button" onClick={() => onSelect(item)}>

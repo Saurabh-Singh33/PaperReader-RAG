@@ -863,6 +863,222 @@ footer span {
   }
 }
 
+/* Minimal conversation surface */
+.reader-main .workspace {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-height: 0;
+  flex: 1;
+  padding: 16px 24px 20px;
+}
+.reader-body {
+  height: calc(100vh - 60px);
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.reader-main {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.reader-main .tab-panel-visible {
+  min-height: 0;
+  flex: 1;
+  gap: 10px;
+}
+.reader-main .ai-chat-panel {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+.reader-main .ai-chat-panel .message-list {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.reader-main .conversation-panel {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--reader-bg);
+}
+.reader-main .message-list {
+  gap: 14px;
+  padding: 12px 0 20px;
+}
+.reader-main .message {
+  max-width: 85%;
+}
+.reader-main .ai-chat-panel .ai-message {
+  width: 100%;
+  max-width: none;
+}
+.assistant-logo {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--reader-primary);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+.reader-main .ai-chat-panel .ai-message .message-avatar {
+  background: transparent;
+}
+.reader-main .ai-chat-panel .ai-message .message-content {
+  flex: 1;
+}
+.reader-main .message-content {
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+.reader-main .message-text {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.reader-main .message-avatar {
+  width: 28px;
+  height: 28px;
+}
+.reader-main .message-actions {
+  opacity: 0.65;
+}
+.reader-main .chat-input-area {
+  padding: 12px 0 0;
+  border-top: 1px solid var(--reader-border);
+}
+.reader-main .suggestion-pills {
+  gap: 8px;
+  margin: 0 0 10px;
+}
+.reader-main .suggestion-pills button {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  background: #f7f9fc;
+}
+.reader-main .question-form {
+  min-height: 56px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 8px;
+}
+.reader-main .question-form input {
+  font-size: 15px;
+}
+.reader-main .empty-state {
+  min-height: 0;
+  gap: 8px;
+}
+.reader-main .empty-state h3 {
+  font-size: 15px;
+  font-weight: 500;
+}
+.reader-main .empty-icon {
+  width: 40px;
+  height: 40px;
+}
+.reader-main .input-disclaimer {
+  display: none;
+}
+.reader-main .ai-controls {
+  margin-top: 8px;
+}
+
+@media (max-width: 760px) {
+  .reader-main .workspace {
+    padding: 10px 16px 14px;
+  }
+  .reader-main .message {
+    max-width: 96%;
+  }
+}
+
+/* Fixed chat shell: only the answer list scrolls. */
+.reader-app,
+.reader-body,
+.reader-main,
+.reader-main .workspace,
+.reader-main .tab-panel-visible,
+.reader-main .conversation-panel {
+  min-height: 0;
+}
+.reader-app {
+  height: 100vh;
+  overflow: hidden;
+}
+.reader-body {
+  height: calc(100vh - 60px);
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.reader-main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.reader-main .tab-container {
+  flex: 0 0 auto;
+  margin-top: 8px;
+}
+.reader-main .workspace {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  overflow: hidden;
+}
+.reader-main .tab-panel-visible {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+.reader-main .conversation-panel {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+.reader-main .conversation-panel .message-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.reader-main .conversation-panel .chat-input-area {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 2;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--reader-bg);
+}
+.reader-main .conversation-panel .question-form {
+  flex: 0 0 56px;
+}
+
+.reader-main .workspace {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-height: 0;
+  flex: 1;
+}
+.reader-main .tab-panel-visible {
+  display: flex;
+  flex-direction: column;
+}
+.reader-main .ai-chat-panel {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+
 /* Spacious reader workspace */
 :root {
   --reader-bg: #ffffff;
@@ -1959,5 +2175,118 @@ body,
   }
   .suggestion-pills button {
     flex: 0 0 auto;
+  }
+}
+
+/* Final chat sizing overrides */
+.reader-body {
+  height: calc(100vh - 60px);
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.reader-main {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.reader-main .workspace {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  min-height: 0;
+  flex: 1;
+  padding: 16px 24px 20px;
+}
+.reader-main .tab-panel-visible {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  gap: 10px;
+}
+.reader-main .conversation-panel {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--reader-bg);
+}
+.reader-main .ai-chat-panel {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+}
+.reader-main .ai-chat-panel .message-list {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+.reader-main .message-list {
+  gap: 14px;
+  padding: 12px 0 20px;
+}
+.reader-main .message {
+  max-width: 85%;
+}
+.reader-main .message-content {
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+.reader-main .message-text {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.reader-main .message-avatar {
+  width: 28px;
+  height: 28px;
+}
+.reader-main .message-actions {
+  opacity: 0.65;
+}
+.reader-main .chat-input-area {
+  padding: 12px 0 0;
+  border-top: 1px solid var(--reader-border);
+}
+.reader-main .suggestion-pills {
+  gap: 8px;
+  margin: 0 0 10px;
+}
+.reader-main .suggestion-pills button {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  background: #f7f9fc;
+}
+.reader-main .question-form {
+  min-height: 56px;
+  padding: 8px 8px 8px 16px;
+  border-radius: 8px;
+}
+.reader-main .question-form input {
+  font-size: 15px;
+}
+.reader-main .empty-state {
+  min-height: 0;
+  gap: 8px;
+}
+.reader-main .empty-state h3 {
+  font-size: 15px;
+  font-weight: 500;
+}
+.reader-main .empty-icon {
+  width: 40px;
+  height: 40px;
+}
+.reader-main .input-disclaimer {
+  display: none;
+}
+.reader-main .ai-controls {
+  margin-top: 8px;
+}
+@media (max-width: 760px) {
+  .reader-main .workspace {
+    padding: 10px 16px 14px;
+  }
+  .reader-main .message {
+    max-width: 96%;
   }
 }

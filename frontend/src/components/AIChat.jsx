@@ -7,10 +7,8 @@ import {
   Copy,
   Globe2,
   LoaderCircle,
-  MessageCircle,
   Share2,
   ThumbsUp,
-  Trash2,
 } from "lucide-react";
 import { askAI } from "../lib/api";
 
@@ -19,6 +17,15 @@ const suggestions = [
   "Help me brainstorm ideas",
   "Write a concise summary",
 ];
+
+function cleanResponse(text) {
+  return String(text || "")
+    .replace(/```[\s\S]*?```/g, (block) => block.replace(/```/g, ""))
+    .replace(/\*{1,3}/g, "")
+    .replace(/^#{1,6}\s*/gm, "")
+    .replace(/[ \t]+\n/g, "\n")
+    .trim();
+}
 
 export default function AIChat() {
   const { getToken } = useAuth();
@@ -58,7 +65,7 @@ export default function AIChat() {
       const result = await askAI(text, await getToken(), history, webSearch);
       setMessages((current) => [
         ...current,
-        { type: "ai", content: result.answer },
+        { type: "ai", content: cleanResponse(result.answer) },
       ]);
     } catch (error) {
       setMessages((current) => [
@@ -74,42 +81,13 @@ export default function AIChat() {
   };
   return (
     <section className="panel chat-panel conversation-panel ai-chat-panel">
-      <div className="panel-heading">
-        <div>
-          <p className="eyebrow">
-            <Bot size={14} /> General intelligence
-          </p>
-          <h2>Ask the AI anything.</h2>
-        </div>
-        <span className="icon-disc icon-disc-light">
-          <MessageCircle size={19} />
-        </span>
-      </div>
-      <div className="ai-header">
-        <Bot size={17} />
-        <span>
-          AI Chat <small>No PDF context</small>
-        </span>
-        <button
-          className="clear-chat"
-          type="button"
-          onClick={() => {
-            setMessages([]);
-            setLiked({});
-          }}
-          title="Clear AI chat"
-        >
-          <Trash2 size={14} />
-        </button>
-      </div>
       <div className="message-list" aria-live="polite">
         {!messages.length && !loading ? (
           <div className="empty-state">
             <span className="empty-icon">
               <Bot size={24} />
             </span>
-            <h3>Start a new AI conversation</h3>
-            <p>Explore ideas, get unstuck, or learn something new.</p>
+            <h3>No messages yet</h3>
             <div className="empty-suggestions">
               {suggestions.map((item) => (
                 <button
@@ -129,11 +107,15 @@ export default function AIChat() {
               key={`${message.type}-${index}`}
             >
               <div className="message-avatar">
-                {message.type === "user" ? "You" : <Bot size={16} />}
+                {message.type === "user" ? (
+                  "You"
+                ) : (
+                  <span className="assistant-logo">P</span>
+                )}
               </div>
               <div className="message-content">
                 <div className="message-sender">
-                  {message.type === "user" ? "You" : "AI Assistant"}
+                  {message.type === "user" ? "You" : "PaperReader Assistant"}
                 </div>
                 <div className="message-text">{message.content}</div>
                 {message.type === "ai" && (
@@ -176,10 +158,10 @@ export default function AIChat() {
         {loading && (
           <article className="message ai-message loading-message">
             <div className="message-avatar">
-              <Bot size={16} />
+              <span className="assistant-logo">P</span>
             </div>
             <div className="message-content">
-              <div className="message-sender">AI Assistant</div>
+              <div className="message-sender">PaperReader Assistant</div>
               <div className="loading-dots">
                 <i />
                 <i />
@@ -202,7 +184,7 @@ export default function AIChat() {
           <input
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
-            placeholder="Ask the AI anything..."
+            placeholder="Message AI..."
             aria-label="AI question"
             disabled={loading}
           />
