@@ -244,7 +244,7 @@ function Landing() {
           <div className="hero-actions">
             <Auth />
           </div>
-          <div className="trust-row" id="security">
+          <div className="trust-row">
             <ShieldCheck size={16} /> Private workspace <span /> No credit card
             required
           </div>
@@ -337,6 +337,27 @@ function Landing() {
             title="Build a point of view"
             copy="Challenge assumptions, compare claims, and arrive at your own sharper reading."
           />
+        </div>
+      </section>
+      <section className="security-section" id="security">
+        <div className="security-content">
+          <p className="eyebrow">
+            <LockKeyhole size={14} /> Your work stays yours
+          </p>
+          <h2>
+            Read with
+            <br />
+            <em>peace of mind.</em>
+          </h2>
+          <p>
+            Your papers live in a private workspace. PaperReader keeps your
+            research separate, protected, and ready whenever you return.
+          </p>
+        </div>
+        <div className="security-badge" aria-hidden="true">
+          <ShieldCheck size={31} />
+          <strong>PRIVATE BY DESIGN</strong>
+          <span>Protected workspace</span>
         </div>
       </section>
       <footer className="landing-footer">

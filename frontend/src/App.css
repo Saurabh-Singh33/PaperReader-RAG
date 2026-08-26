@@ -43,8 +43,10 @@ button {
   justify-content: space-between;
   align-items: center;
   min-height: 42px;
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 2;
+  background: #f7fafc;
 }
 .brand {
   display: flex;
@@ -174,7 +176,14 @@ button {
   width: 100%;
 }
 .landing {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: visible;
+}
+.landing-hero,
+.proof-strip,
+.features-section,
+.security-section {
+  scroll-margin-top: 66px;
 }
 .landing-hero {
   display: grid;
@@ -398,6 +407,59 @@ button {
 }
 .features-section {
   padding: 125px 2% 80px;
+}
+.security-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  border-top: 1px solid var(--line);
+  padding: 90px 6% 105px;
+  background: var(--amber-light);
+}
+.security-content {
+  max-width: 520px;
+}
+.security-section h2 {
+  margin: 0;
+  color: var(--navy);
+  font-size: clamp(35px, 4vw, 53px);
+  line-height: 0.99;
+  letter-spacing: -0.05em;
+}
+.security-section h2 em {
+  color: var(--amber);
+  font-style: normal;
+}
+.security-content > p:last-child {
+  max-width: 430px;
+  margin: 25px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.security-badge {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  min-width: 190px;
+  padding: 28px 24px;
+  border: 1px solid #e7d18b;
+  background: #fffaf0;
+  color: var(--navy);
+  text-align: center;
+}
+.security-badge svg {
+  color: #4d8b66;
+}
+.security-badge strong,
+.security-badge span {
+  font: 10px "DM Mono", monospace;
+  letter-spacing: 0.08em;
+}
+.security-badge span {
+  color: var(--muted);
+  letter-spacing: 0;
 }
 .section-heading {
   display: flex;
@@ -831,6 +893,11 @@ footer span {
   }
   .features-section {
     padding: 80px 0 55px;
+  }
+  .security-section {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 75px 8px 80px;
   }
   .section-heading {
     display: block;

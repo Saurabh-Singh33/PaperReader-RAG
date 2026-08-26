@@ -104,7 +104,7 @@ export default function Upload({ onUploaded }) {
             <Check size={17} /> Paper indexed
           </>
         ) : (
-          "Index this paper"
+          "Click to Start reading with AI"
         )}
       </button>
       {message && <p className={`status-message ${status}`}>{message}</p>}
