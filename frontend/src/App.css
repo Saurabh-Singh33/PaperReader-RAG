@@ -39,13 +39,24 @@ button {
   padding: 24px 5vw;
 }
 .topbar {
+  position: sticky;
+  top: 0;
+  display: block;
+  min-height: 94px;
+  padding-top: 12px;
+  border-bottom: 1px solid var(--line);
+  background: #f7fafc;
+}
+.topbar-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-height: 42px;
+}
+.landing .topbar {
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 10;
   background: #f7fafc;
 }
 .brand {
@@ -91,17 +102,39 @@ button {
 }
 .nav-links {
   display: flex;
-  gap: 30px;
-  margin-left: auto;
-  margin-right: 38px;
+  justify-content: center;
+  gap: 34px;
+  width: 100%;
+  margin: 14px 0 0;
 }
 .nav-links a {
+  position: relative;
   color: var(--muted);
   font-size: 12px;
   text-decoration: none;
+  transition:
+    color 0.2s,
+    transform 0.2s;
 }
-.nav-links a:hover {
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -7px;
+  left: 0;
+  height: 2px;
+  background: var(--amber);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+.landing .nav-links a:hover,
+.landing .nav-links a:focus-visible {
   color: var(--navy);
+  transform: translateY(-1px);
+}
+.landing .nav-links a:hover::after,
+.landing .nav-links a:focus-visible::after {
+  transform: scaleX(1);
 }
 .auth-actions,
 .user-area,
@@ -383,6 +416,13 @@ button {
   column-gap: 10px;
   border-right: 1px solid var(--line);
   padding: 0 30px;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+.proof-strip > div:hover {
+  background: #ffffff80;
+  transform: translateY(-2px);
 }
 .proof-strip > div:last-child {
   border: 0;
@@ -448,13 +488,24 @@ button {
   background: #fffaf0;
   color: var(--navy);
   text-align: center;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s,
+    border-color 0.25s;
+}
+.security-badge:hover {
+  border-color: var(--amber);
+  box-shadow: 0 12px 26px #1a365d18;
+  transform: translateY(-4px);
 }
 .security-badge svg {
   color: #4d8b66;
 }
 .security-badge strong,
 .security-badge span {
-  font: 10px "DM Mono", monospace;
+  font:
+    10px "DM Mono",
+    monospace;
   letter-spacing: 0.08em;
 }
 .security-badge span {
@@ -493,9 +544,11 @@ button {
   color: var(--ink);
   transition:
     transform 0.25s,
-    box-shadow 0.25s;
+    box-shadow 0.25s,
+    border-color 0.25s;
 }
 .feature-card:hover {
+  border-color: #c7a13b;
   transform: translateY(-6px);
   box-shadow: 0 18px 35px #1a365d17;
 }
@@ -537,20 +590,111 @@ button {
   opacity: 1;
 }
 .landing-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-top: 12px;
   border-top: 1px solid var(--line);
-  padding: 24px 2%;
+  padding: 34px 2% 22px;
+  background: #eef4f7;
   color: var(--muted);
+}
+.footer-main,
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.footer-main {
+  padding-bottom: 28px;
+}
+.footer-bottom {
+  border-top: 1px solid #d5e1e7;
+  padding-top: 17px;
   font:
     10px "DM Mono",
     monospace;
 }
-.landing-footer .brand {
+.landing-footer .brand,
+.footer-brand,
+.footer-credit,
+.footer-meta,
+.footer-status {
+  transition:
+    color 0.2s,
+    transform 0.2s;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.footer-brand > div {
+  display: grid;
+  gap: 5px;
+}
+.footer-brand strong {
+  color: var(--navy);
+  font-size: 14px;
+}
+.footer-brand span {
+  color: var(--muted);
+  font-size: 11px;
+}
+.footer-brand:hover {
+  color: var(--amber);
+  transform: translateY(-1px);
+}
+.footer-credit {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  column-gap: 7px;
+  row-gap: 2px;
+  min-width: 190px;
+  padding: 13px 16px;
+  border-left: 3px solid var(--amber);
+  background: #fff8dc;
+  color: var(--navy);
   font:
-    700 14px "Inter",
-    sans-serif;
+    10px "DM Mono",
+    monospace;
+}
+.footer-credit-label {
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+.footer-credit strong {
+  color: var(--amber);
+  font-weight: 500;
+}
+.footer-credit:hover {
+  color: var(--amber);
+  transform: translateY(-1px);
+}
+.footer-meta {
+  color: var(--muted);
+}
+.footer-status {
+  color: var(--navy);
+  font-weight: 500;
+}
+.footer-status:hover {
+  color: var(--amber);
+  transform: translateY(-1px);
+}
+.footer-status > span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #4d8b66;
+}
+.landing .nav-links a:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 5px;
 }
 .app-shell {
   background: #f7fafc;
@@ -855,8 +999,32 @@ footer span {
   .app-shell {
     padding: 20px;
   }
+  .topbar {
+    min-height: 126px;
+    padding-top: 8px;
+  }
+  .topbar-main {
+    gap: 12px;
+  }
+  .landing .brand {
+    min-width: 0;
+    font-size: 13px;
+  }
+  .landing .brand span {
+    max-width: 170px;
+  }
+  .landing .auth-actions {
+    flex-shrink: 0;
+  }
+  .landing .auth-actions .button {
+    padding: 9px 10px;
+    font-size: 10px;
+  }
   .nav-links {
-    display: none;
+    gap: 0;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding: 0 4px;
   }
   .topbar-meta .secure-label {
     display: none;
@@ -909,10 +1077,23 @@ footer span {
     margin-top: 30px;
   }
   .landing-footer {
+    padding: 28px 0 18px;
+  }
+  .footer-main,
+  .footer-bottom {
     align-items: flex-start;
     flex-direction: column;
-    gap: 15px;
-    padding: 22px 0;
+    gap: 14px;
+  }
+  .footer-main {
+    padding-bottom: 22px;
+  }
+  .footer-credit {
+    width: 100%;
+    min-width: 0;
+  }
+  .footer-bottom {
+    gap: 12px;
   }
   .dashboard-intro {
     display: block;
@@ -1358,13 +1539,7 @@ footer span {
   }
 }
 
-/* Final reader scroll contract */
-html,
-body,
-#root {
-  height: 100%;
-  overflow: hidden;
-}
+/* Reader panes manage their own scrolling; the landing page uses document scroll. */
 .reader-app {
   height: 100vh;
   min-height: 0;
@@ -1438,13 +1613,6 @@ body,
   background: var(--reader-bg);
 }
 
-/* Final reader scroll contract */
-html,
-body,
-#root {
-  height: 100%;
-  overflow: hidden;
-}
 .reader-app {
   height: 100vh;
   min-height: 0;
@@ -1519,13 +1687,6 @@ body,
 }
 
 /* Authoritative reader layout: the message list is the only scroll region. */
-html,
-body,
-#root {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
 .reader-app {
   width: 100%;
   height: 100vh;
@@ -1610,6 +1771,13 @@ body,
   flex: 0 0 56px;
 }
 @media (max-width: 760px) {
+  .nav-links {
+    display: flex;
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    margin: 12px 0 0;
+  }
   .reader-main {
     width: 100%;
   }
@@ -1909,14 +2077,15 @@ body,
   }
 }
 
-/* Full-screen reader layout */
+/* Full-screen reader layout. Keep document scrolling available for the landing page. */
 html,
 body,
 #root {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .reader-app {
   width: 100vw;
@@ -2028,11 +2197,6 @@ body,
 }
 
 @media (max-width: 760px) {
-  html,
-  body,
-  #root {
-    overflow: hidden;
-  }
   .reader-topbar {
     flex-basis: 60px;
     height: 60px;

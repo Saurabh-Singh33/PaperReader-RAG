@@ -215,16 +215,18 @@ function Landing() {
   return (
     <main className="landing">
       <header className="topbar">
-        <a className="brand" href="/">
-          <img className="brand-image" src={logo} alt="" />
-          <span>{brandName}</span>
-        </a>
+        <div className="topbar-main">
+          <a className="brand" href="/">
+            <img className="brand-image" src={logo} alt="" />
+            <span>{brandName}</span>
+          </a>
+          <Auth />
+        </div>
         <nav className="nav-links" aria-label="Main navigation">
           <a href="#features">Features</a>
           <a href="#how-it-works">How it works</a>
           <a href="#security">Security</a>
         </nav>
-        <Auth />
       </header>
       <section className="landing-hero">
         <div className="hero-content">
@@ -361,11 +363,28 @@ function Landing() {
         </div>
       </section>
       <footer className="landing-footer">
-        <span className="brand">
-          <img className="brand-image" src={logo} alt="" />
-          <span>{brandName}</span>
-        </span>
-        <span>Copyright 2026 {brandName} | Built for curious minds</span>
+        <div className="footer-main">
+          <div className="footer-brand">
+            <img className="brand-image" src={logo} alt="" />
+            <div>
+              <strong>{brandName}</strong>
+              <span>Thoughtful tools for curious readers.</span>
+            </div>
+          </div>
+          <div className="footer-credit">
+            <span className="footer-credit-label">CREATED WITH CARE</span>
+            <span>Made by</span>
+            <strong>Saurabh</strong>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span className="footer-meta">
+            Copyright 2026 PaperReader. Built for curious minds.
+          </span>
+          <span className="footer-status">
+            <span /> Private workspace
+          </span>
+        </div>
       </footer>
     </main>
   );
