@@ -1397,6 +1397,339 @@ footer span {
   color: var(--reader-primary);
 }
 
+/* Final message presentation overrides legacy theme blocks above. */
+.reader-app .reader-main .selected-paper {
+  display: none;
+}
+.reader-app .reader-main .message-content,
+.reader-app .reader-main .user-message .message-content,
+.reader-app .reader-main .ai-message .message-content {
+  border: 0;
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--reader-text);
+}
+.reader-app .reader-main .user-message .message-content {
+  padding: 4px 0;
+  color: var(--reader-text);
+  text-align: right;
+}
+.reader-app .reader-main .ai-message .message-content {
+  padding: 8px 12px;
+  border-left-color: var(--reader-border);
+}
+.reader-app .reader-main .user-message .message-sender,
+.reader-app .reader-main .ai-message .message-sender {
+  color: var(--reader-muted);
+}
+.reader-app .reader-main .user-message .message-text,
+.reader-app .reader-main .ai-message .message-text {
+  color: var(--reader-text);
+  font-size: 14px;
+  font-weight: 400;
+}
+.reader-app .reader-main .user-message .message-avatar {
+  display: none;
+}
+.reader-app .reader-main .assistant-logo {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+/* Simple message treatment: content stays readable without colored bubbles. */
+.reader-app .reader-main .message-content,
+.reader-app .reader-main .user-message .message-content,
+.reader-app .reader-main .ai-message .message-content {
+  border: 0;
+  border-left: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--reader-text);
+}
+.reader-app .reader-main .user-message .message-content {
+  padding: 4px 0;
+  color: var(--reader-text);
+  text-align: right;
+}
+.reader-app .reader-main .ai-message .message-content {
+  padding: 8px 12px;
+  border-left-color: var(--reader-border);
+}
+.reader-app .reader-main .user-message .message-sender,
+.reader-app .reader-main .ai-message .message-sender {
+  color: var(--reader-muted);
+  font-size: 10px;
+}
+.reader-app .reader-main .user-message .message-text,
+.reader-app .reader-main .ai-message .message-text {
+  color: var(--reader-text);
+  font-size: 14px;
+  font-weight: 400;
+}
+.reader-app .reader-main .user-message .message-avatar {
+  display: none;
+}
+.reader-app .reader-main .assistant-logo {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+.reader-app .reader-main .selected-paper {
+  display: none;
+}
+.reader-app .reader-main .chat-actions {
+  padding-top: 0;
+}
+
+/* Final reader contract: the answer panel owns the flexible height. */
+.reader-app .reader-main .workspace {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  gap: 0;
+  padding: 0 20px 4px;
+}
+.reader-app .reader-main .papers-panel-with-document {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  gap: 3px;
+  overflow: hidden;
+}
+.reader-app .reader-main .upload-panel-compact {
+  flex: 0 0 auto;
+  min-height: 0;
+  margin: 0;
+  padding: 4px 10px;
+}
+.reader-app .reader-main .papers-panel-with-document > .conversation-panel {
+  min-height: 0;
+  height: 0;
+  flex: 1 1 auto;
+}
+.reader-app .reader-main .conversation-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+.reader-app .reader-main .message-list {
+  min-height: 0;
+  height: 0;
+  flex: 1 1 auto;
+  gap: 10px;
+  padding: 2px 0 3px;
+}
+.reader-app .reader-main .chat-input-area {
+  flex: 0 0 auto;
+  padding: 2px 0;
+}
+.reader-app .reader-main .chat-actions {
+  min-height: 0;
+  margin: 0;
+  padding: 0 0 2px;
+}
+.reader-app .reader-main .suggestion-pills {
+  margin: 0;
+  padding: 1px 0 3px;
+}
+.reader-app .reader-main .question-form {
+  height: 38px;
+  min-height: 38px;
+}
+.reader-app .reader-main .message-text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.reader-app .assistant-logo {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  object-fit: cover;
+}
+@media (max-width: 760px) {
+  .reader-app .reader-main .workspace {
+    padding: 0 10px 3px;
+  }
+  .reader-app .reader-main .message-text {
+    font-size: 13px;
+  }
+}
+
+/* Answer-focused reader layout. Keep these rules scoped to the signed-in app. */
+.reader-app .reader-body {
+  min-height: 0;
+  height: calc(100vh - 66px);
+  overflow: hidden;
+}
+.reader-app .reader-main {
+  min-height: 0;
+  overflow: hidden;
+}
+.reader-app .reader-main .workspace {
+  min-height: 0;
+  height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: 2px 24px 4px;
+}
+.reader-app .reader-main .tab-panel-visible {
+  min-height: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  gap: 6px;
+  overflow: hidden;
+}
+.reader-app .reader-main .conversation-panel {
+  min-height: 0;
+  height: 100%;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+.reader-app .reader-main .papers-panel-with-document {
+  gap: 2px;
+}
+.reader-app .reader-main .message-list {
+  min-height: 0;
+  height: 0;
+  max-height: none;
+  flex: 1 1 auto;
+  gap: 12px;
+  padding: 2px 0 4px;
+}
+.reader-app .reader-main .message {
+  width: 100%;
+  max-width: 94%;
+}
+.reader-app .reader-main .message-content {
+  max-width: 100%;
+  padding: 11px 15px;
+}
+.reader-app .reader-main .message-text {
+  font-size: 15px;
+  line-height: 1.6;
+}
+.reader-app .reader-main .chat-input-area {
+  flex: 0 0 auto;
+  padding: 2px 0 2px;
+}
+.reader-app .reader-main .suggestion-pills {
+  gap: 6px;
+  margin: 0;
+  padding: 1px 0 3px;
+}
+.reader-app .reader-main .suggestion-pills button {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+.reader-app .reader-main .question-form {
+  min-height: 40px;
+  height: 40px;
+  padding: 4px 6px 4px 12px;
+}
+.reader-app .upload-panel-compact {
+  min-height: 0;
+  margin-bottom: 0;
+  padding: 5px 12px;
+}
+.reader-app .papers-panel-with-document > .upload-panel-compact {
+  flex: 0 0 auto;
+}
+.reader-app .papers-panel-with-document > .conversation-panel {
+  min-height: 0;
+  height: auto;
+  flex: 1 1 auto;
+}
+.indexed-paper-strip,
+.indexed-paper-info {
+  display: flex;
+  align-items: center;
+}
+.indexed-paper-strip {
+  justify-content: space-between;
+  gap: 12px;
+}
+.indexed-paper-info {
+  min-width: 0;
+  gap: 9px;
+  color: var(--reader-text);
+}
+.indexed-paper-info > svg {
+  flex: 0 0 auto;
+  color: var(--amber);
+}
+.indexed-paper-info > div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.indexed-paper-info strong,
+.indexed-paper-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.indexed-paper-info strong {
+  color: var(--reader-text);
+  font-size: 12px;
+}
+.indexed-paper-info span {
+  color: var(--reader-muted);
+  font-size: 10px;
+}
+.add-paper-button {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 5px;
+  padding: 6px 9px;
+  border: 1px solid var(--reader-border);
+  background: var(--reader-panel);
+  color: var(--reader-text);
+  font-size: 10px;
+}
+.add-paper-button:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}
+.loading-status {
+  display: grid;
+  gap: 3px;
+  color: var(--reader-text);
+  font-size: 12px;
+}
+.loading-status span {
+  color: var(--reader-muted);
+  font-size: 11px;
+}
+@media (max-width: 760px) {
+  .reader-app .reader-main .workspace {
+    padding: 2px 12px 4px;
+  }
+  .reader-app .reader-main .message {
+    max-width: 97%;
+  }
+  .reader-app .reader-main .message-text {
+    font-size: 14px;
+  }
+  .reader-app .reader-main .chat-actions {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+}
+
 /* Compact selected paper chip */
 .reader-main .selected-paper {
   display: flex;

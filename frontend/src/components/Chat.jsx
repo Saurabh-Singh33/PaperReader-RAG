@@ -13,6 +13,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { askQuestionForDocument } from "../lib/api";
+import logo from "../assets/logo.jpg";
 
 const suggestions = [
   "What is the central argument?",
@@ -298,7 +299,11 @@ function MessageBubble({
   return (
     <article className={`message ${isUser ? "user-message" : "ai-message"}`}>
       <div className="message-avatar">
-        {isUser ? <span>You</span> : <FileText size={16} />}
+        {isUser ? (
+          <span>You</span>
+        ) : (
+          <img src={logo} alt="" className="assistant-logo" />
+        )}
       </div>
       <div className="message-content">
         <div className="message-sender">
@@ -346,14 +351,35 @@ function MessageBubble({
   );
 }
 function LoadingMessage() {
+  const [statusIndex, setStatusIndex] = useState(0);
+  const statuses = [
+    ["Reading your paper...", "Extracting key concepts"],
+    ["Finding relevant information...", "Searching through your document"],
+    ["Analyzing context...", "Understanding the connections"],
+    ["Crafting your answer...", "Getting the best response"],
+  ];
+
+  useEffect(() => {
+    const timer = window.setInterval(
+      () => setStatusIndex((current) => (current + 1) % statuses.length),
+      1200,
+    );
+    return () => window.clearInterval(timer);
+  }, []);
+
+  const [headline, detail] = statuses[statusIndex];
   return (
     <article className="message ai-message loading-message">
       <div className="message-avatar">
-        <FileText size={16} />
+        <img src={logo} alt="" className="assistant-logo" />
       </div>
       <div className="message-content">
         <div className="message-sender">PaperReader (PDF)</div>
-        <div className="loading-dots">
+        <div className="loading-status">
+          <strong>{headline}</strong>
+          <span>↳ {detail}</span>
+        </div>
+        <div className="loading-dots" aria-hidden="true">
           <i />
           <i />
           <i />

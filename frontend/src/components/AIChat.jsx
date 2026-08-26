@@ -177,7 +177,7 @@ export default function AIChat() {
                 {message.type === "user" ? (
                   "You"
                 ) : (
-                  <span className="assistant-logo">P</span>
+                  <img src={logo} alt="" className="assistant-logo" />
                 )}
               </div>
               <div className="message-content">
@@ -225,7 +225,7 @@ export default function AIChat() {
         {loading && (
           <article className="message ai-message loading-message">
             <div className="message-avatar">
-              <span className="assistant-logo">P</span>
+              <img src={logo} alt="" className="assistant-logo" />
             </div>
             <div className="message-content">
               <div className="message-sender">PaperReader Assistant</div>

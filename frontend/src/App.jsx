@@ -171,22 +171,17 @@ export default function App() {
               <MessageCircle size={15} /> AI Chat
             </button>
           </div>
-          {activeTab === "papers" && selected && (
-            <div className="selected-paper">
-              <FileText className="selected-paper-icon" size={14} />
-              <strong>{selected.name}</strong>
-            </div>
-          )}
           <div className="workspace">
             <div
               className={
                 activeTab === "papers"
-                  ? "tab-panel-visible"
+                  ? `tab-panel-visible ${selected ? "papers-panel-with-document" : ""}`
                   : "tab-panel-hidden"
               }
             >
               <Upload
-                key={`upload-${chatSession}`}
+                compact={Boolean(selected)}
+                selectedName={selected?.name}
                 onUploaded={handleUploaded}
               />
               <Chat key={chatSession} document={selected} />
