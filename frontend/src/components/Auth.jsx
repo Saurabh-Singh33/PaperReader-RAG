@@ -12,10 +12,10 @@ export default function Auth({ compact = false }) {
   if (!isSignedIn) {
     return (
       <div className="auth-actions">
-        <SignInButton mode="modal">
+        <SignInButton mode="modal" fallbackRedirectUrl="/dashboard">
           <button className="button button-quiet">Sign in</button>
         </SignInButton>
-        <SignUpButton mode="modal">
+        <SignUpButton mode="modal" fallbackRedirectUrl="/dashboard">
           <button className="button button-dark">
             Get started <ArrowRight size={16} />
           </button>

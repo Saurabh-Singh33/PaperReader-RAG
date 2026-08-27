@@ -2,13 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import {
   ArrowUp,
-  Check,
-  Copy,
   Download,
   Globe2,
   LoaderCircle,
   Share2,
-  ThumbsUp,
   Trash2,
 } from "lucide-react";
 import { askAI } from "../lib/api";
@@ -35,26 +32,12 @@ export default function AIChat() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [webSearch, setWebSearch] = useState(false);
-  const [liked, setLiked] = useState({});
-  const [copied, setCopied] = useState(null);
   const [chatCopied, setChatCopied] = useState(false);
   const endRef = useRef(null);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
-  const copy = async (text, index) => {
-    await navigator.clipboard?.writeText(text);
-    setCopied(index);
-    window.setTimeout(() => setCopied(null), 1500);
-  };
-  const share = async (text, index) => {
-    if (navigator.share)
-      await navigator
-        .share({ title: "PaperReader | Know your Papers", text })
-        .catch(() => {});
-    else await copy(text, index);
-  };
   const shareChat = async () => {
     if (!messages.length) return;
     const chatText = [
@@ -107,7 +90,6 @@ export default function AIChat() {
   const clearChat = () => {
     if (!messages.length || !window.confirm("Clear this conversation?")) return;
     setMessages([]);
-    setLiked({});
   };
   const submit = async (event) => {
     event.preventDefault();
@@ -185,39 +167,6 @@ export default function AIChat() {
                   {message.type === "user" ? "You" : "PaperReader Assistant"}
                 </div>
                 <div className="message-text">{message.content}</div>
-                {message.type === "ai" && (
-                  <div className="message-actions">
-                    <button
-                      type="button"
-                      onClick={() => copy(message.content, index)}
-                    >
-                      {copied === index ? (
-                        <Check size={13} />
-                      ) : (
-                        <Copy size={13} />
-                      )}{" "}
-                      {copied === index ? "Copied" : "Copy"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => share(message.content, index)}
-                    >
-                      <Share2 size={13} /> Share
-                    </button>
-                    <button
-                      className={liked[index] ? "active" : ""}
-                      type="button"
-                      onClick={() =>
-                        setLiked((current) => ({
-                          ...current,
-                          [index]: !current[index],
-                        }))
-                      }
-                    >
-                      <ThumbsUp size={13} /> Like
-                    </button>
-                  </div>
-                )}
               </div>
             </article>
           ))

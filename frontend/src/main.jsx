@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { ClerkProvider } from "@clerk/clerk-react";
+import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./App.css";
 import logo from "./assets/logo.jpg";
@@ -41,10 +42,14 @@ root.render(
     <React.StrictMode>
       <ClerkProvider
         publishableKey={publishableKey}
+        afterSignInUrl="/dashboard"
+        afterSignUpUrl="/dashboard"
         fallbackRedirectUrl="/dashboard"
         fallback={<ClerkLoading />}
       >
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </ClerkProvider>
     </React.StrictMode>
   ) : (

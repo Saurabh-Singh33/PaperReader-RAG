@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useAuth, useUser } from "@clerk/clerk-react";
+import { SignIn, SignUp, useAuth, useUser } from "@clerk/clerk-react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import {
   ArrowRight,
   BookOpen,
@@ -23,12 +24,13 @@ import Chat from "./components/Chat";
 import AIChat from "./components/AIChat";
 import Sidebar from "./components/Sidebar";
 import ThemeToggle from "./components/ThemeToggle";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { deleteDocument, listDocuments } from "./lib/api";
 import logo from "./assets/logo.jpg";
 
 const brandName = "PaperReader | Know your Papers";
 
-export default function App() {
+function Dashboard() {
   const { isSignedIn, isLoaded } = useUser();
   const { getToken } = useAuth();
   const [documents, setDocuments] = useState([]);
@@ -202,6 +204,53 @@ export default function App() {
         </span>
         <span>Powered by Gemini + Qdrant</span>
       </footer>
+    </main>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<LandingRoute />} />
+      <Route path="/signin" element={<AuthRoute mode="sign-in" />} />
+      <Route path="/signup" element={<AuthRoute mode="sign-up" />} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
+function LandingRoute() {
+  const { isSignedIn, isLoaded } = useUser();
+
+  if (!isLoaded) return <ClerkRouteLoading />;
+  return isSignedIn ? <Navigate to="/dashboard" replace /> : <Landing />;
+}
+
+function AuthRoute({ mode }) {
+  const { isSignedIn, isLoaded } = useUser();
+
+  if (!isLoaded) return <ClerkRouteLoading />;
+  if (isSignedIn) return <Navigate to="/dashboard" replace />;
+
+  return (
+    <main className="auth-page">
+      {mode === "sign-in" ? (
+        <SignIn fallbackRedirectUrl="/dashboard" />
+      ) : (
+        <SignUp fallbackRedirectUrl="/dashboard" />
+      )}
+    </main>
+  );
+}
+
+function ClerkRouteLoading() {
+  return (
+    <main className="loading-screen">
+      <img className="brand-image" src={logo} alt="" />
+      <strong>{brandName}</strong>
     </main>
   );
 }
